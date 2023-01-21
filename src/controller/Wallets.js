@@ -59,11 +59,6 @@ export async function deposit(req, res) {
     }
 
     try {
-        const userWallet = await db
-            .collection("wallets")
-            .findOne({ _id: userAccess._id });
-        const { wallet } = userWallet;
-
         const deposit = {
             value,
             description,
@@ -75,6 +70,42 @@ export async function deposit(req, res) {
             .updateOne(
                 { _id: userAccess._id },
                 { $push: { wallet: { ...deposit } } }
+            );
+        res.status(201).send("Depósito registrado");
+    } catch (err) {
+        res.status(500).send(err);
+    }
+}
+
+export async function withdraw(req, res) {
+    const { authorization } = req.headers;
+    const { value, description } = req.body;
+    const token = authorization?.replace("Bearer ", "");
+    const time = dayjs().format("DD/MM");
+
+    const invalid = walletSchema.validate({ value, description });
+    if (invalid.error) {
+        res.status(422).send(invalid.error.details);
+        return;
+    }
+
+    const userAccess = await db.collection("sessions").findOne({ token });
+    if (!userAccess) {
+        return res.status(422).send("Acesso negado");
+    }
+
+    try {
+        const withdraw = {
+            value,
+            description,
+            date: time,
+            type: "withdraw",
+        };
+        await db
+            .collection("wallets")
+            .updateOne(
+                { _id: userAccess._id },
+                { $push: { wallet: { ...withdraw } } }
             );
         res.status(201).send("Depósito registrado");
     } catch (err) {
