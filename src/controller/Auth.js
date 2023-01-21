@@ -3,29 +3,12 @@ import db from "../config/database.js";
 import { v4 as uuidV4 } from "uuid";
 import { userSchema } from "../model/AuthSchema.js";
 
+function validateSchema(schema, data) {
+
+}
+
 export async function signUp(req, res) {
     const { username, email, password, confirmPassword } = req.body;
-
-    const { err } = userSchema.validate({
-        username,
-        email,
-        password,
-        confirmPassword,
-    });
-
-    if (
-        password !== confirmPassword ||
-        username.length === 0 ||
-        email.length === 0 ||
-        password.length === 0
-    ) {
-        return res.status(422).send("Dados inválidos");
-    }
-
-    if (err) {
-        const errMsgs = err.details.map((err) => err.message);
-        return res.status(422).send(errMsgs);
-    }
 
     const passwordHashed = bcrypt.hashSync(password, 10);
 
@@ -48,9 +31,6 @@ export async function signUp(req, res) {
 
 export async function signIn(req, res) {
     const { email, password } = req.body;
-
-    if (email.length === 0 || password.length === 0)
-        return res.status(422).send("Confira seus dados");
 
     try {
         const userExists = await db.collection("users").findOne({ email });
