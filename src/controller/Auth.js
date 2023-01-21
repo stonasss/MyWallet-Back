@@ -1,11 +1,6 @@
 import bcrypt from "bcrypt";
 import db from "../config/database.js";
 import { v4 as uuidV4 } from "uuid";
-import { userSchema } from "../model/AuthSchema.js";
-
-function validateSchema(schema, data) {
-
-}
 
 export async function signUp(req, res) {
     const { username, email, password, confirmPassword } = req.body;

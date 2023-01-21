@@ -4,8 +4,8 @@ export function validateSchema(schema) {
 
         if (invalid.error) {
             res.status(422).send(invalid.error.details);
-            return
+            return;
         }
-        next()
-    }
+        next();
+    };
 }

@@ -47,12 +47,6 @@ export async function deposit(req, res) {
     const token = authorization?.replace("Bearer ", "");
     const time = dayjs().format("DD/MM");
 
-    const invalid = walletSchema.validate({ value, description });
-    if (invalid.error) {
-        res.status(422).send(invalid.error.details);
-        return;
-    }
-
     const userAccess = await db.collection("sessions").findOne({ token });
     if (!userAccess) {
         return res.status(422).send("Acesso negado");
@@ -82,12 +76,6 @@ export async function withdraw(req, res) {
     const { value, description } = req.body;
     const token = authorization?.replace("Bearer ", "");
     const time = dayjs().format("DD/MM");
-
-    const invalid = walletSchema.validate({ value, description });
-    if (invalid.error) {
-        res.status(422).send(invalid.error.details);
-        return;
-    }
 
     const userAccess = await db.collection("sessions").findOne({ token });
     if (!userAccess) {
