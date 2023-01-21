@@ -42,15 +42,9 @@ export async function sessions(req, res) {
 }
 
 export async function deposit(req, res) {
-    const { authorization } = req.headers;
     const { value, description } = req.body;
-    const token = authorization?.replace("Bearer ", "");
+    const userAccess = res.locals.session;
     const time = dayjs().format("DD/MM");
-
-    const userAccess = await db.collection("sessions").findOne({ token });
-    if (!userAccess) {
-        return res.status(422).send("Acesso negado");
-    }
 
     try {
         const deposit = {
@@ -72,15 +66,9 @@ export async function deposit(req, res) {
 }
 
 export async function withdraw(req, res) {
-    const { authorization } = req.headers;
     const { value, description } = req.body;
-    const token = authorization?.replace("Bearer ", "");
+    const userAccess = res.locals.session;
     const time = dayjs().format("DD/MM");
-
-    const userAccess = await db.collection("sessions").findOne({ token });
-    if (!userAccess) {
-        return res.status(422).send("Acesso negado");
-    }
 
     try {
         const withdraw = {
@@ -95,7 +83,7 @@ export async function withdraw(req, res) {
                 { _id: userAccess._id },
                 { $push: { wallet: { ...withdraw } } }
             );
-        res.status(201).send("Depósito registrado");
+        res.status(201).send("Saque registrado");
     } catch (err) {
         res.status(500).send(err);
     }
