@@ -84,13 +84,11 @@ export async function signIn(req, res) {
             .findOne({ _id: userExists._id });
 
         if (!walletExists) {
-            await db
-                .collection("wallets")
-                .insertOne({
-                    _id: userExists._id,
-                    username: userExists.username,
-                    wallet: [],
-                });
+            await db.collection("wallets").insertOne({
+                _id: userExists._id,
+                username: userExists.username,
+                wallet: [],
+            });
         }
 
         return res.status(200).send(token);
