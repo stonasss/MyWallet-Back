@@ -1,4 +1,5 @@
 import {
+    transactions,
     wallets,
     deposit,
     users,
@@ -13,6 +14,7 @@ import { authValidation } from "../middleware/AuthMiddleware.js";
 const walletRouter = Router();
 
 walletRouter.get("/wallets", wallets);
+walletRouter.get("/transactions", authValidation, transactions)
 walletRouter.get("/users", users);
 walletRouter.get("/sessions", sessions);
 

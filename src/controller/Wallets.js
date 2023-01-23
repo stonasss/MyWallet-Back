@@ -1,5 +1,4 @@
 import db from "../config/database.js";
-import { walletSchema } from "../model/WalletSchema.js";
 import dayjs from "dayjs";
 
 export async function wallets(req, res) {
@@ -13,6 +12,16 @@ export async function wallets(req, res) {
         .catch(() => {
             res.status(500).send("Problema no servidor de banco de dados");
         });
+}
+
+export async function transactions(req, res) {
+    const userAccess = res.locals.session;
+
+    const userWallet = await db
+        .collection("wallets")
+        .findOne({ _id: userAccess._id });
+    const { username, wallet } = userWallet
+    return res.status(202).send({ username, wallet })
 }
 
 export async function users(req, res) {
@@ -59,7 +68,7 @@ export async function deposit(req, res) {
                 { _id: userAccess._id },
                 { $push: { wallet: { ...deposit } } }
             );
-        res.status(201).send("Depósito registrado");
+        res.status(201).send("Depósito realizado");
     } catch (err) {
         res.status(500).send(err);
     }
